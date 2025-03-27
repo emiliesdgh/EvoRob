@@ -84,45 +84,47 @@ class ES:
             self.save_checkpoint()
         self.current_gen += 1
 
-    def initialise_x0(self,):
+    def initialise_x0(self):
         #TODO
-        mean_vector = ...
+        mean_vector = np.random.unfiorm(-1, 1, self.n_params)
         return mean_vector
 
     def generate_mutated_offspring(self, population_size):
         # TODO
-        population = ...
+        population = np.tile(self.current_mean, (population_size, 1))
 
         # Compute multivariate Gaussian noise
-        mutation = ...
+        mutation = np.random.normal(0, self.current_sigma, population.shape)
 
         # Compute offspring
-        mutated_population = ...
+        mutated_population = population + mutation
 
         return mutated_population
 
     def sort_and_select_parents(self, population, fitness, num_parents):
         # TODO
-        parent_population = ...
-        parent_fitness = ...
+        parent_population = population[:num_parents]
+        parent_fitness = fitness[:num_parents]
         return parent_population, parent_fitness
 
     def update_population_mean(self, parent_population, parent_fitness):
         # TODO
+        min_parent_fitness = np.min(parent_fitness)
+        max_parent_fitness = np.max(parent_fitness)
         # Normalise parent fitness scores
-        normed_parents_fitness = ...
+        normed_parents_fitness = (parent_fitness - min_parent_fitness) / (max_parent_fitness - min_parent_fitness)
 
         # Compute population weighted to the normed fitness scores
-        weighted_parents_population = ...
+        weighted_parents_population = normed_parents_fitness/np.sum(normed_parents_fitness) * parent_population
 
         # Calculate the sum of weighted parents population
-        updated_mean_vector = ...
+        updated_mean_vector = np.average(weighted_parents_population, axis=0)
 
         return updated_mean_vector
 
     def update_sigma(self):
         #TODO
-        minimum_sigma = ...
+        minimum_sigma = np.min(self.current_sigma)
         sigma = self.current_sigma
         param_size = self.n_params
         return sigma
