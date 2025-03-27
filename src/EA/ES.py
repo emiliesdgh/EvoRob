@@ -86,7 +86,7 @@ class ES:
 
     def initialise_x0(self):
         #TODO
-        mean_vector = np.random.unfiorm(-1, 1, self.n_params)
+        mean_vector = np.random.uniform(-1, 1, self.n_params)
         return mean_vector
 
     def generate_mutated_offspring(self, population_size):

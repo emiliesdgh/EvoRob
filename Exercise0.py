@@ -51,6 +51,7 @@ def run_EA(ea, world):
         pop = ea.ask()
         fitnesses_gen = np.empty(ea.n_pop)
         for index, individual in enumerate(pop):
+            # print generations or avg fitness to see if it evoluates
             fit_ind = world.evaluate_individual(individual)
             fitnesses_gen[index] = fit_ind
         ea.tell(pop, fitnesses_gen)
