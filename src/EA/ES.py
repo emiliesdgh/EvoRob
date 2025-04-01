@@ -26,8 +26,8 @@ class ES:
         :param opts: algorithm options
         :param output_dir: output directory Default = "./results/ES"
         """
-        self.n_params = n_params
-        self.n_pop = n_pop
+        self.n_params = n_params # number of parameters
+        self.n_pop = n_pop # population size
         self.n_gen = opts["num_generations"]
         self.n_parents = opts["num_parents"]
         self.min = opts["min"]
@@ -56,6 +56,9 @@ class ES:
         return new_population
 
     def tell(self, solutions, function_values, save_checkpoint=True):
+        # print("solution", solutions)
+        # print("function_values", function_values)
+
         parents_population, parents_fitness = self.sort_and_select_parents(
             solutions, function_values, self.n_parents
         )
@@ -86,39 +89,58 @@ class ES:
 
     def initialise_x0(self):
         #TODO
-        mean_vector = np.random.uniform(-1, 1, self.n_params)
+
+        # mean_vector = np.random.uniform(-1, 1, self.n_params)
+        mean_vector = np.random.uniform(-4, 4, self.n_params)
+        # print("mean_vector", mean_vector)
         return mean_vector
 
     def generate_mutated_offspring(self, population_size):
         # TODO
         population = np.tile(self.current_mean, (population_size, 1))
-
+        print("population size in gen mut off", population_size)
         # Compute multivariate Gaussian noise
-        mutation = np.random.normal(0, self.current_sigma, population.shape)
+        num_param = len(self.current_mean)
+        
+        mutation = np.random.normal(0, 1.0, (population_size, num_param)) 
+        print("mutation", mutation.size)
 
         # Compute offspring
-        mutated_population = population + mutation
+        mutated_population = population + mutation * self.current_sigma
 
         return mutated_population
 
     def sort_and_select_parents(self, population, fitness, num_parents):
         # TODO
-        parent_population = population[:num_parents]
-        parent_fitness = fitness[:num_parents]
+        sorted_idx = np.argsort(fitness)[::-1]
+        # print("sorted_idx1", sorted_idx)
+        sorted_idx = sorted_idx[0:num_parents]
+        print("num_parents", num_parents)
+        # print("sorted_idx2", sorted_idx[0:num_parents])
+        # print("num_parents", num_parents)
+        # print("sorted_idx", sorted_idx.size)
+        # print("population", population)
+
+        parent_population = population[sorted_idx]
+        # print("parent_population", parent_population)
+        parent_fitness = fitness[sorted_idx]
+        # print("parent_fitness", parent_fitness)
+        
         return parent_population, parent_fitness
 
     def update_population_mean(self, parent_population, parent_fitness):
         # TODO
-        min_parent_fitness = np.min(parent_fitness)
-        max_parent_fitness = np.max(parent_fitness)
-        # Normalise parent fitness scores
-        normed_parents_fitness = (parent_fitness - min_parent_fitness) / (max_parent_fitness - min_parent_fitness)
+        # # normalise parent fitness scores
+        # normed_parents_fitness = parent_fitness / np.sum(parent_fitness)
+        # weights = np.outer(normed_parents_fitness, np.ones((1, parent_population.shape[1])))
 
-        # Compute population weighted to the normed fitness scores
-        weighted_parents_population = normed_parents_fitness/np.sum(normed_parents_fitness) * parent_population
+        # # Compute population weighted to the normed fitness scores
+        # weighted_parents_population = np.multiply(parent_population, weights)
 
-        # Calculate the sum of weighted parents population
-        updated_mean_vector = np.average(weighted_parents_population, axis=0)
+        # # Calculate the sum of weighted parents population
+        # updated_mean_vector = np.sum(weighted_parents_population, axis=0)
+
+        updated_mean_vector = np.mean(parent_population, axis=0)
 
         return updated_mean_vector
 

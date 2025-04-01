@@ -49,9 +49,12 @@ def run_EA(ea, world):
     # TODO: Understand the EA ask/tell interface.
     for _ in range(ea.n_gen):
         pop = ea.ask()
+        print("pop", pop)
         fitnesses_gen = np.empty(ea.n_pop)
+        # print("fitnesses_gen", fitnesses_gen)
         for index, individual in enumerate(pop):
             # print generations or avg fitness to see if it evoluates
+            print(f"Generation: {_}, Individual: {index}")
             fit_ind = world.evaluate_individual(individual)
             fitnesses_gen[index] = fit_ind
         ea.tell(pop, fitnesses_gen)
