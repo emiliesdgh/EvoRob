@@ -9,6 +9,8 @@ import gymnasium as gym
 import numpy as np
 import os
 
+import matplotlib.pyplot as plt
+
 """ Large programming projects are often modularised in different components. 
     In the upcoming exercise(s) we will (re)build an evolutionary pipeline for robot evolution in MuJoCo.
 
@@ -39,7 +41,9 @@ class CheetahWorld(World):
         state_space = self.env.observation_space.shape[0]  # https://gymnasium.farama.org/environments/mujoco/half_cheetah/#observation-space
         self.controller = MLP.NNController(state_space, action_space)
         self.dt = self.env.get_wrapper_attr('dt')
-        self.n_params = ...  # TODO
+        # self.n_params = self.controller.get_num_param()  # TODO
+        self.n_params = state_space**2 + state_space * action_space
+        print(self.n_params)
 
     def geno2pheno(self, genotype):
         self.controller.geno2pheno(genotype)
@@ -62,14 +66,30 @@ class CheetahWorld(World):
 
 def run_EA(ea, world):
     env = gym.make(ENV_NAME)
+
+    fitness_curve = []  ##
+
     for gen in range(ea.n_gen):
         pop = ea.ask()
         fitnesses_gen = np.empty(ea.n_pop)
         env.reset()
+        
         for index, genotype in enumerate(pop):
             fit_ind = world.evaluate_individual(genotype)
             fitnesses_gen[index] = fit_ind
+
         ea.tell(pop, fitnesses_gen)
+        # track best fitness this generation
+        best_fitness = np.max(fitnesses_gen)    ##
+        fitness_curve.append(best_fitness)      ##
+        # print(f"Generation {gen}: Best Fitness = {best_fitness}")   ##
+
+        # save fitness curve to disk
+        results_dir = os.path.join(ROOT_DIR, 'results', ENV_NAME, 'CMAES')  ##
+        os.makedirs(results_dir, exist_ok=True) ##          
+        np.save(os.path.join(results_dir, 'fitness_curve.npy'), fitness_curve)  ##
+
+
     env.close()
 
 
@@ -78,6 +98,7 @@ def generate_best_individual_video(controller, video_name: str = 'EvoRob1_video.
     env = gym.make(ENV_NAME, render_mode="rgb_array")
     rewards_list = []
     observations, info = env.reset()
+    results_dir = os.path.join(ROOT_DIR, 'results', ENV_NAME, 'CMAES') ##
     frames = []
     for step in range(1000):
         frames.append(env.render())
@@ -90,6 +111,14 @@ def generate_best_individual_video(controller, video_name: str = 'EvoRob1_video.
 
     import imageio
     imageio.mimsave(video_name, frames, fps=30)  # Set frames per second (fps)
+
+    fitness_curve = np.load(os.path.join(results_dir, 'fitness_curve.npy')) ##
+    plt.plot(fitness_curve) ##
+    plt.xlabel('Generation') ##
+    plt.ylabel('Best Fitness') ##
+    plt.title('Fitness Over Generations') ##
+    plt.savefig(os.path.join(results_dir, 'fitness_curve.png')) ##
+    plt.show() ##
     env.close()
 
 
@@ -99,11 +128,11 @@ def main():
     n_parameters = world.n_params
 
     # TODO: improve the ES settings
-    CMAES_opts["min"] = -10
-    CMAES_opts["max"] = 10
-    CMAES_opts["num_parents"] = 100
+    CMAES_opts["min"] = -13#-10
+    CMAES_opts["max"] = 13#10
+    CMAES_opts["num_parents"] = 125
     CMAES_opts["num_generations"] = 100
-    CMAES_opts["mutation_sigma"] = 2.5
+    CMAES_opts["mutation_sigma"] = 1.5 #2.5
 
     population_size = 50
 
@@ -113,7 +142,7 @@ def main():
     run_EA(ea, world)
 
     # %% Make video of best behaviour
-    best_individual = np.load(os.path.join(results_dir, f"{CMAES_opts["num_generations"]-1}", "x_best.npy"))
+    best_individual = np.load(os.path.join(results_dir, f"{CMAES_opts['num_generations']-1}", "x_best.npy"))
     world.controller.geno2pheno(best_individual)
 
     generate_best_individual_video(world.controller)
@@ -123,7 +152,7 @@ def main():
     ppo = PPO("MlpPolicy", env, device=torch.device('cpu'))
     trial_time = 50  # seconds in simulation
     n_sim_steps = int(trial_time / world.dt)
-    n_total_steps = ...  # TODO
+    n_total_steps = 100000  # TODO
     ppo.learn(total_timesteps=n_total_steps)
     ppo_controller = PPO_controller(ppo)
 
@@ -135,8 +164,8 @@ def main():
         observations, rewards, terminated, truncated, info = env.step(action)
         rewards_list.append(rewards)
 
-    # Make video
-    generate_best_individual_video(ppo_controller, 'PPO_best.mp4')
+    # Make videop
+    generate_best_individual_video(ppo_controller, 'PPO_best1.mp4')
 
     print(np.sum(rewards_list))
     env.close()
