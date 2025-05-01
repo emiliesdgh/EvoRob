@@ -90,7 +90,7 @@ def main():
     plt.fill_between(gens, mean_f - std_f, mean_f + std_f, alpha=0.5)
     plt.xlabel('Generation')
     plt.ylabel('Fitness')
-    plt.savefig('Ackley_f.pdf')
+    plt.savefig('Ackley_fSOLUTION.pdf')
     plt.close()
 
     # %% Change the World
@@ -130,7 +130,7 @@ def main():
     plt.legend(loc='best')
     plt.xlabel('Generation')
     plt.ylabel('Fitness')
-    plt.savefig('my_world_f.pdf')
+    plt.savefig('my_world_fSOLUTION.pdf')
 
 
 if __name__ == '__main__':
