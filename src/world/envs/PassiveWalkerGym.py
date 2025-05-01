@@ -141,7 +141,8 @@ class PassiveWalkerEnv(MujocoEnv, utils.EzPickle):
         x_velocity, y_velocity = xy_velocity
 
         forward_reward = x_velocity * self._forward_reward_weight
-
+        # forward_reward = (x_velocity - y_velocity) * self._forward_reward_weight # punishement if the robot moves on the sides
+        # add more punishement if goes on the side then for moving forward
         #TODO
         reward = forward_reward
         observation = self._get_obs()
