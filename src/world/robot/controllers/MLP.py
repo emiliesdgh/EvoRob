@@ -95,6 +95,9 @@ class NNController():
         assert (state.shape[0] == self.n_input), "State does not correspond with expected input size"
         action = self.model.forward(state)
         return action
+    
+    def get_num_param(self):
+        return self.n_params
 
 
 

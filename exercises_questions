@@ -1,0 +1,20 @@
+Exercise session 27.03.2025 
+
+Q01 : EAs are ‘blackbox’ optimisers that require minimal information on the problem. Nevertheless, what information is still needed for the EA to optimise the parameters in the World?
+
+------------------------------------------------------------------------
+Exercise session 10.04.2025
+
+Q1.0 : Look into the controller class
+- What type of hidden neurons are used? What is the size of each MLP layer, and how does that relate to the sensors and actuators of the ‘agent’? 
+- Which signals do the input neurons receive and what signals do they provide? 
+	Hint: look at the documentation of the half-cheetah environment. 
+- Compute the number of parameters of our neural network with x sensory inputs, y action outputs?
+
+Find out where in the code does the agent interact with the gym environment
+- Given the default parameters, how many time steps does our agent interact with the simulated world.
+- How is fitness calculated in evaluate_individual?
+- What does the reward contain? 
+
+
+Q1.1
