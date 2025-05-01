@@ -138,7 +138,7 @@ def main():
         rewards_list.append(rewards)
 
     # Make video
-    generate_best_individual_video(ppo_controller, 'PPO_best.mp4')
+    generate_best_individual_video(ppo_controller, 'PPO_bestSOLUTION.mp4')
 
     print(np.sum(rewards_list))
     env.close()

@@ -1,3 +1,4 @@
+from src.EA.ES import ES, ES_opts
 from src.EA.CMAES import CMAES, CMAES_opts
 from src.world.robot.controllers import MLP
 from src.utils.Filesys import get_project_root
@@ -42,8 +43,9 @@ class CheetahWorld(World):
         self.controller = MLP.NNController(state_space, action_space)
         self.dt = self.env.get_wrapper_attr('dt')
         # self.n_params = self.controller.get_num_param()  # TODO
-        self.n_params = state_space**2 + state_space * action_space
-        print(self.n_params)
+        # self.n_params = state_space**2 + state_space * action_space
+        # print(self.n_params)
+        self.n_params = self.controller.n_params
 
     def geno2pheno(self, genotype):
         self.controller.geno2pheno(genotype)
@@ -128,11 +130,11 @@ def main():
     n_parameters = world.n_params
 
     # TODO: improve the ES settings
-    CMAES_opts["min"] = -13#-10
-    CMAES_opts["max"] = 13#10
-    CMAES_opts["num_parents"] = 125
+    CMAES_opts["min"] = -1#3#-10
+    CMAES_opts["max"] = 1#3#10
+    CMAES_opts["num_parents"] = 100#125
     CMAES_opts["num_generations"] = 100
-    CMAES_opts["mutation_sigma"] = 1.5 #2.5
+    CMAES_opts["mutation_sigma"] = 0.5#1.5 #2.5
 
     population_size = 50
 
@@ -152,7 +154,7 @@ def main():
     ppo = PPO("MlpPolicy", env, device=torch.device('cpu'))
     trial_time = 50  # seconds in simulation
     n_sim_steps = int(trial_time / world.dt)
-    n_total_steps = 100000  # TODO
+    n_total_steps = population_size * ES_opts["num_generations"]* n_sim_steps #100000  # TODO
     ppo.learn(total_timesteps=n_total_steps)
     ppo_controller = PPO_controller(ppo)
 
@@ -165,7 +167,7 @@ def main():
         rewards_list.append(rewards)
 
     # Make videop
-    generate_best_individual_video(ppo_controller, 'PPO_best1.mp4')
+    generate_best_individual_video(ppo_controller, 'PPO_bestTESTING.mp4')
 
     print(np.sum(rewards_list))
     env.close()
