@@ -111,7 +111,7 @@ def run_EA(ea, world):
         ea.tell(pop, fitnesses_gen)
 
 
-def generate_best_individual_video(world, video_name: str = 'EvoRob2_video.mp4'):
+def generate_best_individual_video(world, video_name: str = 'EvoRob2_video2.mp4'):
     env = gym.make(ENV_NAME,
                    robot_path=world.world_file,
                    init_z_offset=world.slope_height,
