@@ -263,7 +263,7 @@ def main():
     results_dir = os.path.join(ROOT_DIR, 'results', ENV_NAME, 'single')
     ea_single = CMAES_sol(population_size, n_parameters, CMAES_opts, results_dir)
 
-    run_EA_single(ea_single, world)
+    # run_EA_single(ea_single, world)
 
     # %% Optimise multi-objective
     # TODO implement the NSGAII
