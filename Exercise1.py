@@ -42,6 +42,7 @@ class CheetahWorld(World):
         state_space = self.env.observation_space.shape[0]  # https://gymnasium.farama.org/environments/mujoco/half_cheetah/#observation-space
         self.controller = MLP.NNController(state_space, action_space)
         self.dt = self.env.get_wrapper_attr('dt')
+        print(f"dt: {self.dt}")
         # self.n_params = self.controller.get_num_param()  # TODO
         # self.n_params = state_space**2 + state_space * action_space
         # print(self.n_params)
