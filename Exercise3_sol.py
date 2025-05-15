@@ -10,6 +10,7 @@ from gymnasium.vector import AsyncVectorEnv
 
 import xml.etree.ElementTree as xml
 import gymnasium as gym
+import matplotlib.pyplot as plt
 import numpy as np
 import os
 
