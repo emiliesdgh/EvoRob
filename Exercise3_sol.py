@@ -190,7 +190,7 @@ def run_EA_multi(ea_multi, world):
         ea_multi.tell(pop, fitnesses_gen)
 
 
-def generate_best_individual_video(world, video_name: str = 'EvoRob3_video.mp4'):
+def generate_best_individual_video(world, video_name: str = 'EvoRob3_videoBOTH.mp4'):
     env = gym.make(ENV_NAME,
                    robot_path=world.world_file,
                    render_mode="rgb_array")
@@ -263,7 +263,7 @@ def main():
     results_dir = os.path.join(ROOT_DIR, 'results', ENV_NAME, 'single')
     ea_single = CMAES_sol(population_size, n_parameters, CMAES_opts, results_dir)
 
-    # run_EA_single(ea_single, world)
+    run_EA_single(ea_single, world)
 
     # %% Optimise multi-objective
     # TODO implement the NSGAII
