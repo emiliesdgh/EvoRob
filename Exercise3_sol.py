@@ -37,6 +37,7 @@ class AntWorld(World):
 
         self.n_params = self.n_weights + 8
         self.world_file = os.path.join(ROOT_DIR, "AntEnv.xml")
+        # self.world_file = os.path.join(ROOT_DIR, "ProjectEnvUneven.xml")
 
         self.joint_limits = [[-30, 30], [30, 70],
                              [-30, 30], [-70, -30],
@@ -124,6 +125,7 @@ class AntWorld(World):
 
         # % Defining the Robot environment in MuJoCo
         world = xml.parse(os.path.join(ROOT_DIR, 'src', 'world', 'robot', 'assets', "ant_world.xml"))
+        # world = xml.parse(os.path.join(ROOT_DIR, 'src', 'world', 'robot', 'assets', "ant_world_uneven.xml"))
         robot_env = world.getroot()
 
         robot_env.append(xml.Element("include", attrib={"file": "AntRobot.xml"}))
@@ -191,7 +193,7 @@ def run_EA_multi(ea_multi, world):
         ea_multi.tell(pop, fitnesses_gen)
 
 
-def generate_best_individual_video(world, video_name: str = 'EvoRob3_videoBOTH.mp4'):
+def generate_best_individual_video(world, video_name: str = 'EvoRob3_videoCMAES.mp4'):
     env = gym.make(ENV_NAME,
                    robot_path=world.world_file,
                    render_mode="rgb_array")
@@ -222,6 +224,7 @@ def visualise_individual(genotype):
 
     # % Defining the Robot environment in MuJoCo
     world_xml = xml.parse(os.path.join(ROOT_DIR, 'src', 'world', 'robot', 'assets', "ant_world.xml"))
+    # world_xml = xml.parse(os.path.join(ROOT_DIR, 'src', 'world', 'robot', 'assets', "ant_world_uneven.xml"))
     robot_env = world_xml.getroot()
 
     robot_env.append(xml.Element("include", attrib={"file": "AntRobot.xml"}))
@@ -282,7 +285,7 @@ def main():
     results_dir = os.path.join(ROOT_DIR, 'results', ENV_NAME, 'multi')
     ea_multi_obj = NSGAII_sol(population_size, n_parameters, NSGA_opts, results_dir)
 
-    run_EA_multi(ea_multi_obj, world)
+    # run_EA_multi(ea_multi_obj, world)
 
     # %% visualise
     # TODO: Make a video of the best individual, and plot the fitness curve.
@@ -295,6 +298,7 @@ def main():
 
     # % Defining the Robot environment in MuJoCo
     world_xml = xml.parse(os.path.join(ROOT_DIR, 'src', 'world', 'robot', 'assets', "ant_world.xml"))
+    # world_xml = xml.parse(os.path.join(ROOT_DIR, 'src', 'world', 'robot', 'assets', "ant_world_unevem.xml"))
     robot_env = world_xml.getroot()
 
     robot_env.append(xml.Element("include", attrib={"file": "AntRobot.xml"}))
